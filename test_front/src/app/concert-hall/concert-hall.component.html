@@ -15,7 +15,7 @@
 
         <li *ngFor="let hall of concertHalls">
             <div>
-                <span>{{ hall.name }} - {{ hall.location }}</span>
+                <span>{{ hall.name }} - {{ hall.location }} &nbsp;&nbsp;&nbsp;{{ hall.date }} </span>
                 <button (click)="editConcertHall(hall)">Edit</button>
                 <button (click)="deleteConcertHall(hall.id)">Delete</button>
             </div>
