@@ -1,18 +1,27 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import * as XLSX from 'xlsx'; 
+import { ConcertHallService } from '../services/concert-hall.service';
+import { BandService } from '../services/band.service';
+import { CommonModule } from '@angular/common';
+import { Band } from '../models/Band';
+import { ConcertHall } from '../models/hall';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [HttpClientModule], 
+  imports: [HttpClientModule, CommonModule,FormsModule], 
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css']
 })
 export class FileUploadComponent {
   fileToUpload: File | null = null;
-
-  constructor(private http: HttpClient) {}
+  bands: Band[] = []; 
+  concertHalls: ConcertHall[] = [];
+  selectedBandId: number | null = null; 
+  selectedConcertHallId: number | null = null; 
+  constructor(private http: HttpClient, private bandService: BandService, private concertHallService: ConcertHallService) {}
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -65,6 +74,54 @@ console.log(test);
   };
 
   reader.readAsArrayBuffer(this.fileToUpload);
+}
+
+onBandSelect() {
+  this.selectedConcertHallId = null;
+}
+
+ngOnInit(): void {
+  this.loadBands();
+  this.loadConcertHalls();
+}
+
+loadBands() {
+  this.bandService.getBands().subscribe((data) => {
+    this.bands = data;
+    console.log('Bands:', this.bands);  
+  });
+}
+
+loadConcertHalls() {
+  this.concertHallService.getConcertHalls().subscribe((data) => {
+    this.concertHalls = data;
+    console.log('Concert Halls:', this.concertHalls); 
+  });
+}
+
+// assignConcertHalls(bandId: number, selectedOptions: any) {
+//   const selectedConcertHalls = Array.from(selectedOptions).map((option: any) => option.value);
+//   selectedConcertHalls.forEach((concertHallId: any) => {
+//     this.bandService.assignConcertHall(bandId, concertHallId).subscribe(() => {
+//       alert('Concert Hall assigned to Band!');
+//     });
+//   });
+// }
+submitSelection() {
+  if (this.selectedBandId && this.selectedConcertHallId) {
+    this.bandService.assignConcertHall(this.selectedBandId, this.selectedConcertHallId).subscribe({
+      next: (response) => {
+        console.log('Concert hall assigned successfully:', response);
+        alert('Concert hall successfully assigned to the band!');
+      },
+      error: (error) => {
+        console.error('Error assigning concert hall:', error);
+        alert('Error assigning concert hall.');
+      }
+    });
+  } else {
+    alert('Please select both a band and a concert hall.');
+  }
 }
 
 }

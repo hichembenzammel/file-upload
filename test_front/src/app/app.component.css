@@ -1,0 +1,33 @@
+.menu {
+    background-color: #333;
+    padding: 10px;
+}
+
+.menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.menu li {
+    display: inline;
+    margin-right: 20px;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    text-decoration: underline;
+}
+
+.menu .active {
+    color: yellow;
+    font-weight: bold;
+}
+
+.menu {
+    position: relative;
+    z-index: 1000;
+}

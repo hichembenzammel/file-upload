@@ -2,3 +2,28 @@
     <input type="file" (change)="onFileChange($event)" />
     <button (click)="uploadFile()" type="button">Upload</button>
 </form>
+
+<div class="band-selection" style="margin-top: 10%; margin-left: 39%; max-width: 80%;">
+    <h2>Select Band and Assign Concert</h2>
+    <div style="margin-left: 5%;">
+        <label for="bandSelect">Select a Band:</label>
+        <select id="bandSelect" [(ngModel)]="selectedBandId" (change)="onBandSelect()" style="margin-left: 1%;">
+      <option value="">--Select a Band--</option>
+      <option *ngFor="let band of bands" [value]="band.id">{{ band.name }}</option>
+    </select>
+
+        <div *ngIf="selectedBandId">
+            <label for="concertHallSelect">Select Concert:</label>
+            <select id="concertHallSelect" [(ngModel)]="selectedConcertHallId" style="margin-left: 0.4%;">
+        <option value="">--Select a Concert--</option>
+        <option *ngFor="let hall of concertHalls" [value]="hall.id">{{ hall.name }}</option>
+      </select>
+        </div>
+
+        <div>
+            <button (click)="submitSelection()" [disabled]="!selectedBandId || !selectedConcertHallId" style="margin-top: 2%;margin-left: 2%;">
+      Assign Concert to Band
+    </button>
+        </div>
+    </div>
+</div>

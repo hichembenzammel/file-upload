@@ -80,25 +80,46 @@ class BandController extends AbstractController
      */
     public function bansd(BandRepository $bandRepository): JsonResponse
     {
-        $bands = $bandRepository->findAll();
+        $bands = $this->getDoctrine()->getRepository(Band::class)->findAll(); 
 
-        return $this->json($bands);
+        if (!$bands) {
+            return $this->json(['message' => 'No bands found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = [];
+        foreach ($bands as $band) {
+            $data[] = [
+                'id' => $band->getId(),
+                'name' => $band->getName(),
+                'origin' => $band->getOrigin(),
+                'ville' => $band->getVille(),
+                'year' => $band->getYear(),
+                'separation' => $band->getSeparation(),
+                'fondateur' => $band->getFondateur(),
+                'membre' => $band->getMembre(),
+                'music' => $band->getMusic(),
+                'presentation' => $band->getPresentation()
+            ];
+        }
+
+        return $this->json($data);
     }
-
     /**
-     * @Route("/assign-concerthall/{bandId}", name="assign_concerthall", methods={"PUT"})
+     * @Route("/assign-concerthall/{bandId}/{concertHallId}", name="assign_concerthall", methods={"PUT"})
      */
-    public function assignConcertHall(Request $request, $bandId, ConcertHallRepository $concertHallRepository): JsonResponse
+    public function assignConcertHall(Request $request, $bandId, $concertHallId, ConcertHallRepository $concertHallRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $band = $this->getDoctrine()->getRepository(Band::class)->find($bandId);
-        $concertHall = $concertHallRepository->find($data['concertHallId']);
+        // $concertHall = $this->getDoctrine()->getRepository(ConcertHall::class)->find($concertHallId);
+
+        $concertHall = $concertHallRepository->find($concertHallId);
 
         if (!$band || !$concertHall) {
             return $this->json(['error' => 'Band or Concert Hall not found'], 404);
         }
 
-         $band->setConcertHall($concertHall); 
+        $band->addConcertHall($concertHall);
 
         $this->getDoctrine()->getManager()->flush();
 

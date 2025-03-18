@@ -147,7 +147,7 @@ class Band
         return $this;
     }
 
-    public function getSeparation(): ?self
+    public function getSeparation(): ?int
     {
         return $this->separation;
     }
